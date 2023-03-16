@@ -67,8 +67,7 @@ def writeData(values,newId):
     creds = service_account.Credentials.from_service_account_file(KEY,scopes=SCOPES)
     service=build('sheets','v4',credentials=creds)
     sheet = service.spreadsheets()
-    data = [values]
-    result = sheet.values().append(spreadsheetId=newId,range='Stats!A1',valueInputOption='USER_ENTERED',body={'values':data}).execute()
+    result = sheet.values().append(spreadsheetId=newId,range='Stats!A1',valueInputOption='USER_ENTERED',body={'values':values}).execute()
         
 
 
