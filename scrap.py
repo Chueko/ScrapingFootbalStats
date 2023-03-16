@@ -60,6 +60,7 @@ def start_chrome():
 
 def scrap(country):
     flag="span.flg-"+country
+    data=[]
     try:
             driver.get('https://www.whoscored.com/')
             time.sleep(2)
@@ -80,13 +81,13 @@ def scrap(country):
         if(count==2):
             pages=int(i.text.split(" |")[0].split("/")[1])
         count+=1
-    page=0
+    page=1
     #While because the site sometimes doesnt get the click right
-    while(page<=pages):
+    while(page<pages):
         #find the table of player statistics
         elements=driver.find_element(By.CSS_SELECTOR,"div#statistics-table-summary").find_elements(By.CSS_SELECTOR,"td.grid-abs")
         for element in elements:
-            
+            aux=[]
             #search for players from the country selected
             try:
                 element.find_element(By.CSS_SELECTOR,flag)
@@ -94,9 +95,9 @@ def scrap(country):
                 #opens player page
                 driver_aux.get(url)
                 time.sleep(2)
-                data=[]
+                
                 #scrap data
-                data.append(driver_aux.find_element(By.CSS_SELECTOR,"h1.header-name").text)
+                aux.append(driver_aux.find_element(By.CSS_SELECTOR,"h1.header-name").text)
                 table=driver_aux.find_element(By.CSS_SELECTOR,"tbody#player-table-statistics-body")
                 table=table.find_elements(By.CSS_SELECTOR,"tr")[-1]
                 table=table.find_elements(By.CSS_SELECTOR,"td")
@@ -104,9 +105,9 @@ def scrap(country):
                 #skip 2 props that doesnt need
                 for prop in table:
                     if(count>1):
-                        data.append(prop.text)
+                        aux.append(prop.text)
                     count+=1
-                writeData.writeData(data,id)   
+                data.append(aux) 
             except:
                 continue
         #search for next button and skip first one
@@ -121,12 +122,10 @@ def scrap(country):
             time.sleep(2)
             page+=1
         except:
-            continue            
-
+            continue           
+    writeData.writeData(data,id)  
                 
-        """  url_sheet=writeData.writeData(institution,data)
-        writeData.setTitles(url,institution,len(data),url_sheet)                     
-             """
+       
         
 if __name__ == "__main__":
     country_name=input("Wich country you want to see players? ")
